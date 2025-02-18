@@ -1,10 +1,16 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.api.deps import get_db, get_current_user
-from app.serviecs.product_services import ProductCRUD
-from app.schemas.product_schemas import ProductCreate, ProductUpdate, ProductInDB
+
+from app.api.deps import get_current_user, get_db
 from app.models.user import User
+from app.schemas.product_schemas import (
+    ProductCreate,
+    ProductInDB,
+    ProductUpdate,
+)
+from app.serviecs.product_services import ProductCRUD
 
 router = APIRouter()
 
@@ -31,12 +37,15 @@ def read_product(
     db_product = ProductCRUD.get_product(db, product_id)
     if db_product is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy sản phẩm"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy sản phẩm",
         )
     return db_product
 
 
-@router.post("/", response_model=ProductInDB, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=ProductInDB, status_code=status.HTTP_201_CREATED
+)
 def create_product(
     product: ProductCreate,
     db: Session = Depends(get_db),
@@ -57,7 +66,8 @@ def update_product(
     db_product = ProductCRUD.update_product(db, product_id, product)
     if db_product is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy sản phẩm"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy sản phẩm",
         )
     return db_product
 
@@ -72,5 +82,6 @@ def delete_product(
     deleted = ProductCRUD.delete_product(db, product_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy sản phẩm"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy sản phẩm",
         )

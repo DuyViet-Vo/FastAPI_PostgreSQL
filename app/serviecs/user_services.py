@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
+
+from app.core.security import get_password_hash, verify_password
 from app.models.user import User
 from app.schemas.user_schemas import UserCreate
-from app.core.security import get_password_hash, verify_password
+
 
 class UserCRUD:
     @staticmethod
@@ -18,7 +20,7 @@ class UserCRUD:
         db_user = User(
             email=user.email,
             username=user.username,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
         )
         db.add(db_user)
         db.commit()

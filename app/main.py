@@ -1,15 +1,13 @@
-
-from app.api.v1.router import router as api_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.router import router as api_router
 
 app = FastAPI(
     title="Buidling RESTful APIs with FastAPI",
     description="Demo project for building RESTful APIs with FastAPI. Designed by Vo Duy Viet",
     version="1.0.0",
-    openapi_tags=[
-    ]
+    openapi_tags=[],
 )
 
 # Cấu hình CORS nếu cần

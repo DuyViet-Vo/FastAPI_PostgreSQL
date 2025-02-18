@@ -1,11 +1,16 @@
-from sqlalchemy.orm import Session
 from typing import List, Optional
+
+from sqlalchemy.orm import Session
+
 from app.models.product import Product
 from app.schemas.product_schemas import ProductCreate, ProductUpdate
 
+
 class ProductCRUD:
     @staticmethod
-    def get_products(db: Session, skip: int = 0, limit: int = 100) -> List[Product]:
+    def get_products(
+        db: Session, skip: int = 0, limit: int = 100
+    ) -> List[Product]:
         return db.query(Product).offset(skip).limit(limit).all()
 
     @staticmethod

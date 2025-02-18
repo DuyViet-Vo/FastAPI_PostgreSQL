@@ -1,10 +1,11 @@
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from alembic import context
 import os
 import sys
+from logging.config import fileConfig
+
 from dotenv import load_dotenv
+from sqlalchemy import engine_from_config, pool
+
+from alembic import context
 
 # Thêm đường dẫn gốc của project vào sys.path
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -12,13 +13,13 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 # Load các biến môi trường
 load_dotenv()
 
+# Import cấu hình database URL
+from app.core.config import settings
+
 # Import Base và các models
 from app.core.database import Base
 from app.models.product import Product  # Import tất cả models ở đây
 from app.models.user import User  # Import tất cả models ở đây
-
-# Import cấu hình database URL
-from app.core.config import settings
 
 # Khởi tạo Alembic Config
 config = context.config
@@ -32,6 +33,7 @@ if config.config_file_name is not None:
 
 # Đặt target metadata
 target_metadata = Base.metadata
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

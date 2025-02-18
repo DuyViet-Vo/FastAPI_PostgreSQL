@@ -15,6 +15,7 @@ load_dotenv()
 # Import Base và các models
 from app.core.database import Base
 from app.models.product import Product  # Import tất cả models ở đây
+from app.models.user import User  # Import tất cả models ở đây
 
 # Import cấu hình database URL
 from app.core.config import settings

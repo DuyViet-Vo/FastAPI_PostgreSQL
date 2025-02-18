@@ -1,13 +1,15 @@
-from typing import Generator
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from typing import Generator, Optional
+from fastapi import Depends, HTTPException, status, Security
+from fastapi.security import APIKeyHeader
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import SessionLocal
 from app.serviecs.user_services import UserCRUD
+from app.models.user import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
+# Sử dụng APIKeyHeader thay vì OAuth2PasswordBearer
+api_key_header = APIKeyHeader(name="Authorization", auto_error=False)
 
 def get_db() -> Generator:
     db = SessionLocal()
@@ -18,14 +20,22 @@ def get_db() -> Generator:
 
 async def get_current_user(
     db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
-):
+    token: Optional[str] = Security(api_key_header)
+) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    
+    if not token:
+        raise credentials_exception
+        
     try:
+        # Loại bỏ prefix "Bearer " nếu có
+        if token.startswith("Bearer "):
+            token = token.replace("Bearer ", "")
+            
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
@@ -34,7 +44,7 @@ async def get_current_user(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-        
+    
     user = UserCRUD.get_user_by_email(db, email=email)
     if user is None:
         raise credentials_exception
